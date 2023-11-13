@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>遗器适配鉴定</title>
+    <link rel="stylesheet" href="http://localhost:8088/css/style.css">
+</head>
+<body>
+<div id="navbar">
+    <ul class="side-nav">
+        <li><a href="http://localhost:8088">首页</a></li>
+        <li><a href="http://localhost:8088/character/list">角色列表</a></li>
+        <li><a href="http://localhost:8088/relic-check/home">遗器适配鉴定</a></li>
+    </ul>
+</div>
+<div id="main-page">
+    <h1>遗器适配鉴定</h1>
+    <button id="refresh-cache">刷新缓存</button>
+
+    <div id="relic-level-div">
+        <p>遗器等级</p>
+        <div>
+            <label class="relic">0~2级<input type="radio" name="relic-level" data-level="0" checked></label>
+            <label class="relic">3~5级<input type="radio" name="relic-level" data-level="1"></label>
+            <label class="relic">6~8级<input type="radio" name="relic-level" data-level="2"></label>
+            <label class="relic">9~11级<input type="radio" name="relic-level" data-level="3"></label>
+            <label class="relic">12~14级<input type="radio" name="relic-level" data-level="4"></label>
+            <label class="relic">15级<input type="radio" name="relic-level" data-level="5"></label>
+        </div>
+    </div>
+
+    <div id="relic-set">
+        <p class="desc">遗器套装</p>
+        <div class="relic">
+        </div>
+    </div>
+
+    <div id="relic-type">
+        <p class="desc">遗器部位</p>
+        <div class="relic-type">
+            <label class="relic-type">帽子<input type="checkbox"></label>
+            <label class="relic-type">手套<input type="checkbox"></label>
+            <label class="relic-type">衣服<input type="checkbox"></label>
+            <label class="relic-type">鞋子<input type="checkbox"></label>
+            <label class="relic-type">球<input type="checkbox"></label>
+            <label class="relic-type">绳<input type="checkbox"></label>
+        </div>
+    </div>
+
+    <div id="main-stat">
+        <p class="desc">遗器主词条</p>
+        <div class="stat">
+        </div>
+    </div>
+
+    <div id="sub-stat">
+        <p class="desc">遗器副词条</p>
+        <div class="stat">
+        </div>
+    </div>
+
+    <div id="bottom-div">
+        <button id="submit-relic-check">检查</button>
+        <button id="reset-checkbox">重置</button>
+    </div>
+
+    <div id="result-table">
+<!--        <table>-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th style="width: 100px;" align="left">角色名</th>-->
+<!--                <th style="width: 300px;" align="left">主词条适配性</th>-->
+<!--                <th style="width: 250px;" align="left">套装效果适配性</th>-->
+<!--                <th style="width: 100px;" align="left">副词条适配度</th>-->
+<!--                <th style="width: 500px;" align="left">副词条适配详情</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--        </table>-->
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript" src="http://localhost:8088/js/relic-check.js"></script>
+</body>
+</html>

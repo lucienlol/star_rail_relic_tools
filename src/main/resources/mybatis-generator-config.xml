@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MyBatis-Generator 相关配置 -->
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<!-- 所有的配置均在根元素 generatorConfiguration 下 -->
+<generatorConfiguration>
+    <properties resource="application.properties" />
+    <context id="YiQiBen" defaultModelType="flat">
+        <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
+        <commentGenerator>
+            <!-- 添加 db 表中字段的注释 -->
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+        <jdbcConnection driverClass="${spring.datasource.driver-class-name}"
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
+            <!--高版本的 mysql-connector-java 需要设置 nullCatalogMeansCurrent=true-->
+        <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.example.starrail.po" targetProject="src/main/java">
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <!--<property name="enableSubPackages" value="false"/>-->
+        </sqlMapGenerator>
+        <javaClientGenerator targetPackage="com.example.starrail.dao" targetProject="src/main/java" type="XMLMAPPER">
+            <!--<property name="enableSubPackages" value="false"/>-->
+        </javaClientGenerator>
+
+
+        <table tableName="char_build_sug" />
+        <table tableName="char_main_stat" />
+        <table tableName="char_options" />
+        <table tableName="char_relic_set" />
+        <table tableName="char_stat" />
+        <table tableName="star_rail_character" />
+        <table tableName="relic_set" />
+        <table tableName="relic_type" />
+        <table tableName="stat" />
+    </context>
+</generatorConfiguration>
