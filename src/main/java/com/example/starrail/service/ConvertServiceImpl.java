@@ -1,9 +1,7 @@
 package com.example.starrail.service;
 
 import com.example.starrail.po.*;
-import com.example.starrail.vo.MainStatVO;
-import com.example.starrail.vo.RelicSetVO;
-import com.example.starrail.vo.SubStatVO;
+import com.example.starrail.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,5 +86,23 @@ public class ConvertServiceImpl implements ConvertService{
         CharStat charStat = toPO(subStatVO);
         charStat.setCharacterId(characterId);
         return charStat;
+    }
+
+    @Override
+    public RelicEntity toPO(RelicEntityVO relicEntityVO) {
+        RelicEntity relicEntity = new RelicEntity();
+        relicEntity.setRelicLevel(relicEntityVO.getRelicLevel());
+        relicEntity.setRelicSetId(cacheService.getRelicSetByName(relicEntityVO.getRelicSetList().get(0)).getRelicSetId());
+        relicEntity.setRelicTypeId(cacheService.getRelicTypeByName(relicEntityVO.getRelicTypeList().get(0)).getRelicTypeId());
+        relicEntity.setMainStatId(cacheService.getStatByName(relicEntityVO.getMainStatList().get(0)).getStatId());
+
+        StringBuilder sb = new StringBuilder("");
+        for(StatValueVO statValueVO : relicEntityVO.getSubStatList()) {
+            sb.append(statValueVO.getStatName()).append(":").append(statValueVO.getValue()).append("\n");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        relicEntity.setSubStatValues(sb.toString());
+
+        return relicEntity;
     }
 }

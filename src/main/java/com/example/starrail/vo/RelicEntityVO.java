@@ -2,7 +2,7 @@ package com.example.starrail.vo;
 
 import java.util.List;
 
-public class RelicCheckVO {
+public class RelicEntityVO {
 
     Integer relicLevel;
 

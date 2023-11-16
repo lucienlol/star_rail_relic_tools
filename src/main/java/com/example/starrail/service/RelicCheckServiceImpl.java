@@ -2,13 +2,11 @@ package com.example.starrail.service;
 
 import com.example.starrail.po.*;
 import com.example.starrail.vo.CharacterCheckVO;
-import com.example.starrail.vo.RelicCheckVO;
+import com.example.starrail.vo.RelicEntityVO;
 import com.example.starrail.vo.StatValueVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.*;
 
 import static com.example.starrail.service.ConstUtil.formatPrecision;
@@ -177,13 +175,13 @@ public class RelicCheckServiceImpl implements RelicCheckService{
     }
 
     @Override
-    public List<CharacterCheckVO> doCheck(RelicCheckVO relicCheckVO) {
+    public List<CharacterCheckVO> doCheck(RelicEntityVO relicEntityVO) {
         List<CharacterCheckVO> voList = new ArrayList<>();
         List<StarRailCharacter> characterList = characterService.getAllShow();
 
         // gen sub stat enhance list
         List<StatEnhance> statEnhanceList = new ArrayList<>();
-        for(StatValueVO statValueVO : relicCheckVO.getSubStatList()) {
+        for(StatValueVO statValueVO : relicEntityVO.getSubStatList()) {
             Stat stat = cacheService.getStatByName(statValueVO.getStatName());
             StatEnhance statEnhance = new StatEnhance();
 
@@ -209,8 +207,8 @@ public class RelicCheckServiceImpl implements RelicCheckService{
 
             // check relic set
             Integer relicSetId = -1;
-            if(!relicCheckVO.getRelicSetList().isEmpty()) {
-                String relicSetName = relicCheckVO.getRelicSetList().get(0);
+            if(!relicEntityVO.getRelicSetList().isEmpty()) {
+                String relicSetName = relicEntityVO.getRelicSetList().get(0);
                 relicSetId = cacheService.getRelicSetByName(relicSetName).getRelicSetId();
             }
 
@@ -235,12 +233,12 @@ public class RelicCheckServiceImpl implements RelicCheckService{
             // check main stat
             Integer mainStatId = -1;
             Integer relicTypeId = -1;
-            if(!relicCheckVO.getMainStatList().isEmpty()) {
-                String mainStatName = relicCheckVO.getMainStatList().get(0);
+            if(!relicEntityVO.getMainStatList().isEmpty()) {
+                String mainStatName = relicEntityVO.getMainStatList().get(0);
                 mainStatId = cacheService.getStatByName(mainStatName).getStatId();
             }
-            if(relicCheckVO.getRelicTypeList().size() == 1) {
-                String relicTypeName = relicCheckVO.getRelicTypeList().get(0);
+            if(relicEntityVO.getRelicTypeList().size() == 1) {
+                String relicTypeName = relicEntityVO.getRelicTypeList().get(0);
                 relicTypeId = cacheService.getRelicTypeByName(relicTypeName).getRelicTypeId();
             }
 
@@ -288,7 +286,7 @@ public class RelicCheckServiceImpl implements RelicCheckService{
                 if(statEnhanceList.size() == 3) {
                     characterCheckVO.setStatFitness(formatPrecision(weightedValue / charMax3StatValue.get(characterId)));
                 } else {
-                    double dreamWeightedValue = charMax4StatValue.get(characterId) + (relicCheckVO.getRelicLevel()) *
+                    double dreamWeightedValue = charMax4StatValue.get(characterId) + (relicEntityVO.getRelicLevel()) *
                             maxStatPriority.get(characterId);
                     characterCheckVO.setStatFitness(formatPrecision(weightedValue / dreamWeightedValue));
                 }
