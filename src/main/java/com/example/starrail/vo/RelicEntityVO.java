@@ -4,6 +4,8 @@ import java.util.List;
 
 public class RelicEntityVO {
 
+    Integer relicId;
+
     Integer relicLevel;
 
     List<String> relicSetList;
@@ -13,6 +15,14 @@ public class RelicEntityVO {
     List<String> mainStatList;
 
     List<StatValueVO> subStatList;
+
+    public Integer getRelicId() {
+        return relicId;
+    }
+
+    public void setRelicId(Integer relicId) {
+        this.relicId = relicId;
+    }
 
     public List<String> getMainStatList() {
         return mainStatList;

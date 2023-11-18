@@ -5,6 +5,10 @@ import com.example.starrail.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Service
 public class ConvertServiceImpl implements ConvertService{
 
@@ -89,8 +93,30 @@ public class ConvertServiceImpl implements ConvertService{
     }
 
     @Override
+    public RelicEntityVO toVO(RelicEntity relicEntity) {
+        RelicEntityVO vo = new RelicEntityVO();
+        vo.setRelicId(relicEntity.getRelicEntityId());
+        vo.setRelicLevel(relicEntity.getRelicLevel());
+        vo.setRelicSetList(Collections.singletonList(cacheService.getRelicSetById(relicEntity.getRelicSetId()).getRelicSetName()));
+        vo.setRelicTypeList(Collections.singletonList(cacheService.getRelicTypeById(relicEntity.getRelicTypeId()).getRelicTypeName()));
+        vo.setMainStatList(Collections.singletonList(cacheService.getStatById(relicEntity.getMainStatId()).getStatName()));
+
+        List<StatValueVO> statValueVOList = new ArrayList<>();
+        String[] subStats = relicEntity.getSubStatValues().split("\n");
+        for(String subStat : subStats) {
+            StatValueVO statValueVO = new StatValueVO();
+            statValueVO.setStatName(subStat.split(":")[0]);
+            statValueVO.setValue(subStat.split(":")[1]);
+            statValueVOList.add(statValueVO);
+        }
+        vo.setSubStatList(statValueVOList);
+        return vo;
+    }
+
+    @Override
     public RelicEntity toPO(RelicEntityVO relicEntityVO) {
         RelicEntity relicEntity = new RelicEntity();
+        relicEntity.setRelicEntityId(relicEntityVO.getRelicId());
         relicEntity.setRelicLevel(relicEntityVO.getRelicLevel());
         relicEntity.setRelicSetId(cacheService.getRelicSetByName(relicEntityVO.getRelicSetList().get(0)).getRelicSetId());
         relicEntity.setRelicTypeId(cacheService.getRelicTypeByName(relicEntityVO.getRelicTypeList().get(0)).getRelicTypeId());
@@ -103,6 +129,13 @@ public class ConvertServiceImpl implements ConvertService{
         sb.deleteCharAt(sb.length() - 1);
         relicEntity.setSubStatValues(sb.toString());
 
+        return relicEntity;
+    }
+
+    @Override
+    public RelicEntity toPO(RelicEntityVO relicEntityVO, Integer relicEntityId) {
+        RelicEntity relicEntity = toPO(relicEntityVO);
+        relicEntity.setRelicEntityId(relicEntityId);
         return relicEntity;
     }
 }

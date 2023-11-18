@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>遗器详情页</title>
+    <link rel="stylesheet" href="http://localhost:8088/css/style.css">
+</head>
+<body>
+<div id="navbar">
+    <ul class="side-nav">
+        <li><a href="http://localhost:8088">首页</a></li>
+        <li><a href="http://localhost:8088/character/list">角色列表</a></li>
+        <li><a href="http://localhost:8088/relic-check/home">遗器适配鉴定</a></li>
+    </ul>
+</div>
+<div id="main-page">
+    <h1>遗器详情页</h1>
+
+    <div id="relic-level-div">
+        <p>遗器等级</p>
+        <div>
+            <label class="relic">0<input type="radio" name="relic-level" checked></label>
+            <label class="relic">1<input type="radio" name="relic-level"></label>
+            <label class="relic">2<input type="radio" name="relic-level"></label>
+            <label class="relic">3<input type="radio" name="relic-level"></label>
+            <label class="relic">4<input type="radio" name="relic-level"></label>
+            <label class="relic">5<input type="radio" name="relic-level"></label>
+            <label class="relic">6<input type="radio" name="relic-level"></label>
+            <label class="relic">7<input type="radio" name="relic-level"></label>
+            <label class="relic">8<input type="radio" name="relic-level"></label>
+            <label class="relic">9<input type="radio" name="relic-level"></label>
+            <label class="relic">10<input type="radio" name="relic-level"></label>
+            <label class="relic">11<input type="radio" name="relic-level"></label>
+            <label class="relic">12<input type="radio" name="relic-level"></label>
+            <label class="relic">13<input type="radio" name="relic-level"></label>
+            <label class="relic">14<input type="radio" name="relic-level"></label>
+            <label class="relic">15<input type="radio" name="relic-level"></label>
+        </div>
+    </div>
+
+    <div id="relic-set">
+        <p class="desc">遗器套装</p>
+        <div class="relic">
+        </div>
+    </div>
+
+    <div id="relic-type">
+        <p class="desc">遗器部位</p>
+        <div class="relic-type">
+            <label class="relic-type">帽子<input type="radio" name="relic-type"></label>
+            <label class="relic-type">手套<input type="radio" name="relic-type"></label>
+            <label class="relic-type">衣服<input type="radio" name="relic-type"></label>
+            <label class="relic-type">鞋子<input type="radio" name="relic-type"></label>
+            <label class="relic-type">球<input type="radio" name="relic-type"></label>
+            <label class="relic-type">绳<input type="radio" name="relic-type"></label>
+        </div>
+    </div>
+
+    <div id="main-stat">
+        <p class="desc">遗器主词条</p>
+        <div class="stat">
+        </div>
+    </div>
+
+    <div id="sub-stat">
+        <p class="desc">遗器副词条</p>
+        <div class="stat">
+        </div>
+    </div>
+
+    <div id="bottom-div">
+        <button id="submit-relic-entity">提交</button>
+        <button id="update-relic-entity">更新</button>
+        <button id="reset-checkbox">重置</button>
+    </div>
+</div>
+
+<script type="text/javascript" src="http://localhost:8088/js/relic.js"></script>
+</body>
+</html>

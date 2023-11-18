@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("relic")
@@ -22,8 +23,8 @@ public class RelicController {
 
     @GetMapping("/api/{id}")
     @ResponseBody
-    public RelicEntity getRelicEntity(@PathVariable Integer id) {
-        return relicEntityService.getById(id);
+    public RelicEntityVO getRelicEntity(@PathVariable Integer id) {
+        return convertService.toVO(relicEntityService.getById(id));
     }
 
     @PostMapping("/api/add")
@@ -32,9 +33,25 @@ public class RelicController {
         relicEntityService.insertRelicEntity(convertService.toPO(vo));
     }
 
+    @PostMapping("/api/update")
+    @ResponseBody
+    public void updateRelicEntity(@RequestBody RelicEntityVO vo) {
+        relicEntityService.updateRelicEntity(convertService.toPO(vo));
+    }
+
     @GetMapping("/api/all")
     @ResponseBody
-    public List<RelicEntity> getRelicEntityList() {
-        return relicEntityService.getAll();
+    public List<RelicEntityVO> getRelicEntityList() {
+        return relicEntityService.getAll().stream().map(convertService::toVO).collect(Collectors.toList());
+    }
+
+    @GetMapping("/new")
+    public String newRelicPage() {
+        return "html/relic";
+    }
+
+    @GetMapping("/{id}")
+    public String relicPage() {
+        return "html/relic";
     }
 }

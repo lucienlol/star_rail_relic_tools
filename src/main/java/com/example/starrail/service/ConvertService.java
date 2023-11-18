@@ -29,6 +29,10 @@ public interface ConvertService {
 
     public CharStat toPO(SubStatVO subStatVO, Integer characterId);
 
+    public RelicEntityVO toVO(RelicEntity relicEntity);
+
     public RelicEntity toPO(RelicEntityVO relicEntityVO);
+
+    public RelicEntity toPO(RelicEntityVO relicEntityVO, Integer relicEntityId);
 
 }
