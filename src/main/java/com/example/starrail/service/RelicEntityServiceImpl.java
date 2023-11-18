@@ -36,4 +36,9 @@ public class RelicEntityServiceImpl implements RelicEntityService{
         RelicEntityExample example = new RelicEntityExample();
         return mapper.selectByExample(example);
     }
+
+    @Override
+    public Boolean deleteRelicEntity(Integer id) {
+        return mapper.deleteByPrimaryKey(id) > 0;
+    }
 }

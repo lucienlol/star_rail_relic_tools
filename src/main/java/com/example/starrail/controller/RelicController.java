@@ -33,6 +33,12 @@ public class RelicController {
         relicEntityService.insertRelicEntity(convertService.toPO(vo));
     }
 
+    @DeleteMapping("/api/delete/{id}")
+    @ResponseBody
+    public void deleteRelicEntity(@PathVariable Integer id) {
+        relicEntityService.deleteRelicEntity(id);
+    }
+
     @PostMapping("/api/update")
     @ResponseBody
     public void updateRelicEntity(@RequestBody RelicEntityVO vo) {
@@ -53,5 +59,10 @@ public class RelicController {
     @GetMapping("/{id}")
     public String relicPage() {
         return "html/relic";
+    }
+
+    @GetMapping("/list")
+    public String relicListPage() {
+        return "html/relic-list";
     }
 }

@@ -13,4 +13,6 @@ public interface RelicEntityService {
     public RelicEntity getById(Integer relicEntityId);
 
     public List<RelicEntity> getAll();
+
+    public Boolean deleteRelicEntity(Integer id);
 }
