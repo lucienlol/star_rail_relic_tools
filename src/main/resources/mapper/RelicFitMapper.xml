@@ -20,6 +20,21 @@
     -->
     <result column="sub_stat_fit_desc" jdbcType="LONGVARCHAR" property="subStatFitDesc" />
   </resultMap>
+  <resultMap id="RelicFitDetail" type="com.example.starrail.entity.RelicFitDetail">
+    <id column="relic_fit_id" jdbcType="INTEGER" property="relicFitId" />
+    <result column="relic_id" jdbcType="INTEGER" property="relicId" />
+    <result column="character_id" jdbcType="INTEGER" property="characterId" />
+    <result column="is_main_stat_fit" jdbcType="BIT" property="isMainStatFit" />
+    <result column="is_relic_set_fit" jdbcType="BIT" property="isRelicSetFit" />
+    <result column="sub_stat_fitness" jdbcType="DOUBLE" property="subStatFitness" />
+    <result column="sub_stat_fit_desc" jdbcType="LONGVARCHAR" property="subStatFitDesc" />
+    <result column="relic_level" jdbcType="INTEGER" property="relicLevel" />
+    <result column="relic_set_id" jdbcType="INTEGER" property="relicSetId" />
+    <result column="relic_type_id" jdbcType="INTEGER" property="relicTypeId" />
+    <result column="main_stat_id" jdbcType="INTEGER" property="mainStatId" />
+    <result column="sub_stat_values" jdbcType="VARCHAR" property="subStatValues" />
+    <result column="character_name" jdbcType="VARCHAR" property="characterName" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <!--
       WARNING - @mbg.generated
@@ -242,6 +257,70 @@
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
+  </select>
+  <select id="getDetailByQuery" parameterType="com.example.starrail.entity.RelicFitQuery" resultMap="RelicFitDetail">
+    select
+    a.relic_fit_id, a.relic_id, a.character_id, a.is_main_stat_fit, a.is_relic_set_fit, a.sub_stat_fitness,
+    a.sub_stat_fit_desc,
+    b.relic_level, b.relic_set_id, b.relic_type_id, b.main_stat_id, b.sub_stat_values, c.character_name
+    from (
+    select
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
+    from relic_fit
+    <where>
+      1 = 1
+      <if test="query.relicFitIdList != null and !query.relicFitIdList.isEmpty()">
+        and relic_fit_id in
+          <foreach collection="query.relicFitIdList" open="(" close=")" separator="," item="item" index="i">
+            #{item}
+          </foreach>
+      </if>
+      <if test="query.relicIdList != null and !query.relicIdList.isEmpty()">
+        and relic_id in
+          <foreach collection="query.relicIdList" open="(" close=")" separator="," item="item" index="i">
+              #{item}
+          </foreach>
+      </if>
+      <if test="query.characterIdList != null and !query.characterIdList.isEmpty()">
+        and character_id in
+          <foreach collection="query.characterIdList" open="(" close=")" separator="," item="item" index="i">
+            #{item}
+          </foreach>
+      </if>
+    </where>
+    ) a join (select
+    relic_entity_id, relic_level, relic_set_id, relic_type_id, main_stat_id, sub_stat_values from relic_entity
+    <where>
+      1 = 1
+      <if test="query.relicLevelList != null and !query.relicLevelList.isEmpty()">
+        and relic_level in
+          <foreach collection="query.relicLevelList" open="(" close=")" separator="," item="item" index="i">
+            #{item}
+          </foreach>
+      </if>
+      <if test="query.relicTypeList != null and !query.relicTypeList.isEmpty()">
+        and relic_type_id in
+        <foreach collection="query.relicTypeList" open="(" close=")" separator="," item="item" index="i">
+          #{item}
+        </foreach>
+      </if>
+      <if test="query.relicSetIdList != null and !query.relicSetIdList.isEmpty()">
+        and relic_set_id in
+          <foreach collection="query.relicSetIdList" open="(" close=")" separator="," item="item" index="i">
+            #{item}
+          </foreach>
+      </if>
+      <if test="query.mainStatIdList != null and !query.mainStatIdList.isEmpty()">
+        and main_stat_id in
+          <foreach collection="query.mainStatIdList" open="(" close=")" separator="," item="item" index="i">
+            #{item}
+          </foreach>
+      </if>
+    </where>
+    ) b on a.relic_id = b.relic_entity_id
+    join star_rail_character c on a.character_id = c.character_id
   </select>
   <update id="updateByExampleSelective" parameterType="map">
     <!--

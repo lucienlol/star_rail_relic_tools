@@ -16,4 +16,6 @@ public interface CharacterService {
     Boolean addCharacter(StarRailCharacter character);
 
     Boolean updateCharacter(StarRailCharacter character);
+
+    List<StarRailCharacter> getList(List<Integer> idList);
 }

@@ -1,5 +1,7 @@
 package com.example.starrail.dao;
 
+import com.example.starrail.entity.RelicFitDetail;
+import com.example.starrail.entity.RelicFitQuery;
 import com.example.starrail.po.RelicFit;
 import com.example.starrail.po.RelicFitExample;
 import java.util.List;
@@ -117,4 +119,6 @@ public interface RelicFitMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(RelicFit record);
+
+    List<RelicFitDetail> getDetailByQuery(@Param("query") RelicFitQuery query);
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.example.starrail.service.ConstUtil.formatPrecision;
+import static com.example.starrail.service.StarRailUtil.formatPrecision;
 
 @Service
 public class RelicCheckServiceImpl implements RelicCheckService{
@@ -243,7 +243,7 @@ public class RelicCheckServiceImpl implements RelicCheckService{
             }
 
             StringBuilder mainStatFitMsg = new StringBuilder("");
-            if(Objects.equals(relicTypeId, ConstUtil.HEAD_TYPE) || Objects.equals(relicTypeId, ConstUtil.HAND_TYPE)) {
+            if(Objects.equals(relicTypeId, StarRailUtil.HEAD_TYPE) || Objects.equals(relicTypeId, StarRailUtil.HAND_TYPE)) {
                 characterCheckVO.setIsMainStatRight(1);
                 mainStatFitMsg.append("主词条正确");
             } else {
@@ -297,6 +297,186 @@ public class RelicCheckServiceImpl implements RelicCheckService{
         Collections.sort(voList);
 
         return voList;
+    }
+
+    @Override
+    public List<RelicFit> genRelicFit(List<StarRailCharacter> characterList, List<RelicEntity> relicList) {
+        List<RelicFit> relicFitList = new ArrayList<>();
+        HashMap<Integer, List<Integer>> charRelicSet4Map = new HashMap<>();
+        HashMap<Integer, List<Integer>> charRelicSet2Map = new HashMap<>();
+        HashMap<Integer, Boolean> rainbowBuildMap = new HashMap<>();
+        HashMap<Integer, Map<Integer, Integer>> charStatPriorityMap = new HashMap<>();
+        HashMap<Integer, Map<Integer, List<Integer>>> charMainStatMap = new HashMap<>();
+        HashMap<Integer, Double> charMax3StatValue = new HashMap<>();
+        HashMap<Integer, Double> charMax4StatValue = new HashMap<>();
+        HashMap<Integer, Double> maxStatPriority = new HashMap<>();
+
+
+        for (StarRailCharacter character : characterList) {
+            List<Integer> relicSet4List = new ArrayList<>();
+            List<Integer> relicSet2List = new ArrayList<>();
+            List<CharRelicSet> charRelicSetList = charRelicSetService.getCharRelicSetById(character.getCharacterId());
+            for (CharRelicSet charRelicSet : charRelicSetList) {
+                if (charRelicSet.getEffectDemand() == 1) {
+                    relicSet2List.add(charRelicSet.getRelicSetId());
+                } else {
+                    relicSet4List.add(charRelicSet.getRelicSetId());
+                }
+            }
+            charRelicSet2Map.put(character.getCharacterId(), relicSet2List);
+            charRelicSet4Map.put(character.getCharacterId(), relicSet4List);
+
+            // generate rainbowBuildMap
+            CharOptions charOption = charOptionsService.getById(character.getCharacterId());
+            rainbowBuildMap.put(charOption.getCharacterId(), charOption.getCanRainbowBuild());
+
+            // generate charMainStatMap
+            List<CharMainStat> charMainStatList = charMainStatService.getMainStatByChar(character.getCharacterId());
+            HashMap<Integer, List<Integer>> mainStatMap = new HashMap<>();
+            for (CharMainStat charMainStat : charMainStatList) {
+                Integer relicType = charMainStat.getRelicTypeId();
+                Integer statId = charMainStat.getStatId();
+                if (mainStatMap.containsKey(relicType)) {
+                    mainStatMap.get(relicType).add(statId);
+                } else {
+                    mainStatMap.put(relicType, new ArrayList<>(Collections.singletonList(statId)));
+                }
+            }
+            charMainStatMap.put(character.getCharacterId(), mainStatMap);
+
+            // generate other maps
+            int statCount1 = 0;
+            int statCount2 = 0;
+            int statCount3 = 0;
+            int statCount4 = 0;
+
+            List<CharStat> charStatList = charStatService.getCharStatById(character.getCharacterId());
+            HashMap<Integer, Integer> priorityMap = new HashMap<>();
+            for (CharStat charStat : charStatList) {
+                priorityMap.put(charStat.getStatId(), charStat.getPriority());
+                switch (charStat.getPriority()) {
+                    case 1 -> statCount1++;
+                    case 2 -> statCount2++;
+                    case 3 -> statCount3++;
+                    case 4 -> statCount4++;
+                }
+            }
+            charStatPriorityMap.put(character.getCharacterId(), priorityMap);
+
+            double[] weightedValue = new double[5];
+            weightedValue[0] = 0;
+            int countedNum = 0;
+            int index = 1;
+            while (index <= 4 && countedNum < statCount1) {
+                weightedValue[index] = weightedValue[index - 1] + getWeightedValue(1);
+                index++;
+                countedNum++;
+            }
+            countedNum = 0;
+            while (index <= 4 && countedNum < statCount2) {
+                weightedValue[index] = weightedValue[index - 1] + getWeightedValue(2);
+                index++;
+                countedNum++;
+            }
+            countedNum = 0;
+            while (index <= 4 && countedNum < statCount3) {
+                weightedValue[index] = weightedValue[index - 1] + getWeightedValue(3);
+                index++;
+                countedNum++;
+            }
+            countedNum = 0;
+            while (index <= 4 && countedNum < statCount4) {
+                weightedValue[index] = weightedValue[index - 1] + getWeightedValue(4);
+                index++;
+                countedNum++;
+            }
+            while (index <= 4) {
+                weightedValue[index] = weightedValue[index - 1];
+                index++;
+            }
+
+            charMax3StatValue.put(character.getCharacterId(), weightedValue[3]);
+            charMax4StatValue.put(character.getCharacterId(), weightedValue[4]);
+            maxStatPriority.put(character.getCharacterId(), weightedValue[1]);
+        }
+
+        for(RelicEntity relicEntity : relicList) {
+            // gen sub stat enhance list
+            List<StatEnhance> statEnhanceList = new ArrayList<>();
+            String[] subStats = relicEntity.getSubStatValues().split("\n");
+            for(String subStatStr : subStats) {
+                String statName = subStatStr.split(":")[0];
+                String valueStr = subStatStr.split(":")[1];
+                Stat stat = cacheService.getStatByName(statName);
+                StatEnhance statEnhance = new StatEnhance();
+
+                statEnhance.setStatName(stat.getStatName());
+                statEnhance.setStatId(stat.getStatId());
+                Double enhanceMaxValue = statValueMap.get(statName);
+                Double statValue = enhanceMaxValue;
+                try {
+                    statValue = Double.parseDouble(valueStr);
+                } catch (Exception ignored) {}
+                int enhanceTimes = (int) Math.ceil(statValue / enhanceMaxValue);
+                statEnhance.setStatValue(statValue);
+                statEnhance.setEnhanceTimes(enhanceTimes);
+                statEnhance.setEnhanceRate(formatPrecision(statValue / enhanceMaxValue / enhanceTimes));
+                statEnhanceList.add(statEnhance);
+            }
+
+            for(StarRailCharacter character : characterList) {
+                Integer characterId = character.getCharacterId();
+                RelicFit relicFit = new RelicFit();
+                relicFit.setRelicId(relicEntity.getRelicEntityId());
+                relicFit.setCharacterId(characterId);
+
+                Integer relicSetId = relicEntity.getRelicSetId();
+                relicFit.setIsRelicSetFit(charRelicSet4Map.get(characterId).contains(relicSetId) || charRelicSet2Map.get(characterId).
+                        contains(relicSetId) || rainbowBuildMap.get(characterId));
+
+
+                if(Objects.equals(relicEntity.getRelicTypeId(), StarRailUtil.HEAD_TYPE)
+                        || Objects.equals(relicEntity.getRelicTypeId(), StarRailUtil.HAND_TYPE)) {
+                    relicFit.setIsMainStatFit(true);
+                } else {
+                    List<Integer> mainStatList = charMainStatMap.get(characterId).get(relicEntity.getRelicTypeId());
+                    relicFit.setIsMainStatFit(mainStatList.contains(relicEntity.getMainStatId()));
+                }
+
+                // check sub stat
+                if(statEnhanceList.size() > 4 || statEnhanceList.size() < 3) {
+                    relicFit.setSubStatFitness(0.0);
+                    relicFit.setSubStatFitDesc("词条数量错误");
+                } else {
+                    double weightedValue = 0.0;
+                    Map<Integer, Integer> statPriorityMap = charStatPriorityMap.get(characterId);
+                    StringBuilder sb = new StringBuilder("");
+                    for(StatEnhance statEnhance : statEnhanceList) {
+                        Integer priority = 0;
+                        if(statPriorityMap.containsKey(statEnhance.getStatId())) {
+                            priority = statPriorityMap.get(statEnhance.getStatId());
+                        }
+
+                        weightedValue += statEnhance.getStatValue() / statValueMap.get(statEnhance.statName) * getWeightedValue(priority);
+                        sb.append(statEnhance.getStatName()).append("--").append("优先级权值:").
+                                append(getWeightedValue(priority)).append(",").append("强化次数:").
+                                append(statEnhance.getEnhanceTimes()).append(",").append("强满率")
+                                .append(statEnhance.getEnhanceRate()).append(" ");
+                    }
+                    relicFit.setSubStatFitDesc(sb.toString().trim());
+
+                    if(statEnhanceList.size() == 3) {
+                        relicFit.setSubStatFitness(formatPrecision(weightedValue / charMax3StatValue.get(characterId)));
+                    } else {
+                        double dreamWeightedValue = charMax4StatValue.get(characterId) + (relicEntity.getRelicLevel() / 3) *
+                                maxStatPriority.get(characterId);
+                        relicFit.setSubStatFitness(formatPrecision(weightedValue / dreamWeightedValue));
+                    }
+                }
+                relicFitList.add(relicFit);
+            }
+        }
+        return relicFitList;
     }
 
     private double getWeightedValue(Integer priority) {

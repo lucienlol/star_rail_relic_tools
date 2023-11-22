@@ -51,4 +51,11 @@ public class CharacterServiceImpl implements CharacterService{
         return updateColumn > 0;
     }
 
+    @Override
+    public List<StarRailCharacter> getList(List<Integer> idList) {
+        StarRailCharacterExample example = new StarRailCharacterExample();
+        example.createCriteria().andCharacterIdIn(idList);
+        return mapper.selectByExample(example);
+    }
+
 }

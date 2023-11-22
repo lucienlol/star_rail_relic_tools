@@ -1,19 +1,27 @@
 package com.example.starrail.service;
 
+import com.example.starrail.entity.RelicFitDetail;
+import com.example.starrail.entity.RelicFitQuery;
 import com.example.starrail.po.*;
 import com.example.starrail.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ConvertServiceImpl implements ConvertService{
 
     @Autowired
     CacheService cacheService;
+
+    @Autowired
+    CharacterService characterService;
+
+    @Autowired
+    RelicEntityService relicEntityService;
 
     @Override
     public MainStatVO toVO(CharMainStat charMainStat) {
@@ -137,5 +145,91 @@ public class ConvertServiceImpl implements ConvertService{
         RelicEntity relicEntity = toPO(relicEntityVO);
         relicEntity.setRelicEntityId(relicEntityId);
         return relicEntity;
+    }
+
+    @Override
+    public List<StarRailCharacter> toCharacterList(List<String> characters) {
+        if(characters.contains("all")) {
+            return characterService.getAllShow();
+        } else {
+            return characterService.getList(toIntList(characters));
+        }
+    }
+
+
+    @Override
+    public List<RelicEntity> toRelicList(List<String> relics) {
+        if(relics.contains("all")) {
+            return relicEntityService.getAll();
+        } else {
+            return relicEntityService.getRelicList(toIntList(relics));
+        }
+    }
+
+    @Override
+    public List<Integer> toIntList(List<String> strList) {
+        Set<Integer> intSet = new HashSet<>();
+        for(String str : strList) {
+            if(str.equals("all")) {
+                continue;
+            } else {
+                if(str.contains("-")) {
+                    int starIndex = Integer.parseInt(str.split("-")[0]);
+                    int endIndex = Integer.parseInt(str.split("-")[1]);
+                    intSet.addAll(IntStream.range(starIndex, endIndex + 1).boxed().toList());
+                } else {
+                    intSet.add(Integer.parseInt(str));
+                }
+            }
+        }
+        return intSet.stream().toList();
+    }
+
+    @Override
+    public RelicFitQuery toQuery(RelicFitReq relicFitReq) {
+        RelicFitQuery query = new RelicFitQuery();
+        List<String> characters = relicFitReq.getCharacters();
+        if(!characters.contains("all")) {
+            query.setCharacterIdList(toIntList(characters));
+        }
+        List<String> relics = relicFitReq.getRelics();
+        if(!relics.contains("all")) {
+            query.setRelicIdList(toIntList(relics));
+        }
+        List<String> relicLevels = relicFitReq.getRelicLevels();
+        if(!relicLevels.contains("all")) {
+            query.setRelicLevelList(toIntList(relicLevels));
+        }
+        List<String> relicTypes = relicFitReq.getRelicTypes();
+        if(!relicTypes.contains("all")) {
+            query.setRelicTypeList(relicTypes.stream().map(cacheService::getRelicTypeByName).map(RelicType::getRelicTypeId).collect(Collectors.toList()));
+        }
+        List<String> relicSets = relicFitReq.getRelicSets();
+        if(!relicSets.contains("all")) {
+            query.setRelicSetIdList(relicSets.stream().map(cacheService::getRelicSetByName).map(RelicSet::getRelicSetId).collect(Collectors.toList()));
+        }
+        List<String> mainStats = relicFitReq.getMainStats();
+        if(!mainStats.contains("all")) {
+            query.setMainStatIdList(mainStats.stream().map(cacheService::getStatByName).map(Stat::getStatId).collect(Collectors.toList()));
+        }
+        return query;
+    }
+
+    @Override
+    public RelicFitDetailVO toVO(RelicFitDetail relicFitDetail) {
+        RelicFitDetailVO vo = new RelicFitDetailVO();
+        vo.setRelicFitId(relicFitDetail.getRelicFitId());
+        vo.setRelicId(relicFitDetail.getRelicId());
+        vo.setCharacterName(relicFitDetail.getCharacterName());
+        vo.setRelicLevel(relicFitDetail.getRelicLevel());
+        vo.setRelicType(cacheService.getRelicTypeById(relicFitDetail.getRelicTypeId()).getRelicTypeName());
+        vo.setRelicSetName(cacheService.getRelicSetById(relicFitDetail.getRelicSetId()).getRelicSetName());
+        vo.setMainStatName(cacheService.getStatById(relicFitDetail.getMainStatId()).getStatName());
+        vo.setSubStatValues(relicFitDetail.getSubStatValues());
+        vo.setMainStatFit(relicFitDetail.getMainStatFit());
+        vo.setRelicSetFit(relicFitDetail.getRelicSetFit());
+        vo.setSubStatFitness(relicFitDetail.getSubStatFitness());
+        vo.setSubStatFitDesc(relicFitDetail.getSubStatFitDesc());
+        return vo;
     }
 }

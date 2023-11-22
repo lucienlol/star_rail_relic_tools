@@ -24,24 +24,24 @@ public class CharRelicSetServiceImpl implements CharRelicSetService{
     @Override
     public List<CharRelicSet> getHalfCavernRelicsById(Integer characterId) {
         CharRelicSetExample example = new CharRelicSetExample();
-        example.createCriteria().andCharacterIdEqualTo(characterId).andRelicSetTypeEqualTo(ConstUtil.CAVERN_RELICS)
-                .andEffectDemandEqualTo(ConstUtil.HALF_SET_DEMAND);
+        example.createCriteria().andCharacterIdEqualTo(characterId).andRelicSetTypeEqualTo(StarRailUtil.CAVERN_RELICS)
+                .andEffectDemandEqualTo(StarRailUtil.HALF_SET_DEMAND);
         return charRelicSetMapper.selectByExample(example);
     }
 
     @Override
     public List<CharRelicSet> getAllCavernRelicById(Integer characterId) {
         CharRelicSetExample example = new CharRelicSetExample();
-        example.createCriteria().andCharacterIdEqualTo(characterId).andRelicSetTypeEqualTo(ConstUtil.CAVERN_RELICS)
-                .andEffectDemandEqualTo(ConstUtil.ALL_SET_DEMAND);
+        example.createCriteria().andCharacterIdEqualTo(characterId).andRelicSetTypeEqualTo(StarRailUtil.CAVERN_RELICS)
+                .andEffectDemandEqualTo(StarRailUtil.ALL_SET_DEMAND);
         return charRelicSetMapper.selectByExample(example);
     }
 
     @Override
     public List<CharRelicSet> getPlanarOrnamentsById(Integer characterId) {
         CharRelicSetExample example = new CharRelicSetExample();
-        example.createCriteria().andCharacterIdEqualTo(characterId).andRelicSetTypeEqualTo(ConstUtil.PLANAR_ORNAMENTS)
-                .andEffectDemandEqualTo(ConstUtil.ALL_SET_DEMAND);
+        example.createCriteria().andCharacterIdEqualTo(characterId).andRelicSetTypeEqualTo(StarRailUtil.PLANAR_ORNAMENTS)
+                .andEffectDemandEqualTo(StarRailUtil.ALL_SET_DEMAND);
         return charRelicSetMapper.selectByExample(example);
     }
 

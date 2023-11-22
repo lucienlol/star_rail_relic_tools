@@ -1,13 +1,11 @@
 package com.example.starrail.service;
 
-import com.example.starrail.po.CharMainStat;
-import com.example.starrail.po.CharRelicSet;
-import com.example.starrail.po.CharStat;
-import com.example.starrail.po.RelicEntity;
-import com.example.starrail.vo.MainStatVO;
-import com.example.starrail.vo.RelicEntityVO;
-import com.example.starrail.vo.RelicSetVO;
-import com.example.starrail.vo.SubStatVO;
+import com.example.starrail.entity.RelicFitDetail;
+import com.example.starrail.entity.RelicFitQuery;
+import com.example.starrail.po.*;
+import com.example.starrail.vo.*;
+
+import java.util.List;
 
 public interface ConvertService {
 
@@ -34,5 +32,15 @@ public interface ConvertService {
     public RelicEntity toPO(RelicEntityVO relicEntityVO);
 
     public RelicEntity toPO(RelicEntityVO relicEntityVO, Integer relicEntityId);
+
+    public List<StarRailCharacter> toCharacterList(List<String> characters);
+
+    public List<RelicEntity> toRelicList(List<String> relics);
+
+    public List<Integer> toIntList(List<String> strList);
+
+    public RelicFitQuery toQuery(RelicFitReq relicFitReq);
+
+    public RelicFitDetailVO toVO(RelicFitDetail relicFitDetail);
 
 }
