@@ -19,7 +19,7 @@ p.relic {
     display: inline;
 }
 
-label.relic, label.stat, label.relic-type {
+label.relic, label.stat, label.relic-type, label.character, label.relic-level {
     display: inline-flex;
     padding: 10px;
 }

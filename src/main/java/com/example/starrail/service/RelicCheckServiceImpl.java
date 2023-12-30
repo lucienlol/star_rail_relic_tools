@@ -122,6 +122,7 @@ public class RelicCheckServiceImpl implements RelicCheckService{
             int statCount2 = 0;
             int statCount3 = 0;
             int statCount4 = 0;
+            int statCount5 = 0;
 
             List<CharStat> charStatList = charStatService.getCharStatById(character.getCharacterId());
             HashMap<Integer, Integer> priorityMap = new HashMap<>();
@@ -132,6 +133,7 @@ public class RelicCheckServiceImpl implements RelicCheckService{
                     case 2 -> statCount2++;
                     case 3 -> statCount3++;
                     case 4 -> statCount4++;
+                    case 5 -> statCount5++;
                 }
             }
             charStatPriorityMap.put(character.getCharacterId(), priorityMap);
@@ -160,6 +162,11 @@ public class RelicCheckServiceImpl implements RelicCheckService{
             countedNum = 0;
             while(index <= 4 && countedNum < statCount4) {
                 weightedValue[index] = weightedValue[index - 1] + getWeightedValue(4);
+                index++;
+                countedNum++;
+            }
+            while(index <= 4 && countedNum < statCount5) {
+                weightedValue[index] = weightedValue[index - 1] + getWeightedValue(5);
                 index++;
                 countedNum++;
             }
@@ -309,8 +316,9 @@ public class RelicCheckServiceImpl implements RelicCheckService{
         HashMap<Integer, Map<Integer, List<Integer>>> charMainStatMap = new HashMap<>();
         HashMap<Integer, Double> charMax3StatValue = new HashMap<>();
         HashMap<Integer, Double> charMax4StatValue = new HashMap<>();
+        HashMap<Integer, Double> charMax5StatValue = new HashMap<>();
         HashMap<Integer, Double> maxStatPriority = new HashMap<>();
-
+        HashMap<Integer, Double> backupStatPriority = new HashMap<>();
 
         for (StarRailCharacter character : characterList) {
             List<Integer> relicSet4List = new ArrayList<>();
@@ -349,6 +357,7 @@ public class RelicCheckServiceImpl implements RelicCheckService{
             int statCount2 = 0;
             int statCount3 = 0;
             int statCount4 = 0;
+            int statCount5 = 0;
 
             List<CharStat> charStatList = charStatService.getCharStatById(character.getCharacterId());
             HashMap<Integer, Integer> priorityMap = new HashMap<>();
@@ -359,45 +368,54 @@ public class RelicCheckServiceImpl implements RelicCheckService{
                     case 2 -> statCount2++;
                     case 3 -> statCount3++;
                     case 4 -> statCount4++;
+                    case 5 -> statCount5++;
                 }
             }
             charStatPriorityMap.put(character.getCharacterId(), priorityMap);
 
-            double[] weightedValue = new double[5];
+            double[] weightedValue = new double[6];
             weightedValue[0] = 0;
             int countedNum = 0;
             int index = 1;
-            while (index <= 4 && countedNum < statCount1) {
+            while (index <= 5 && countedNum < statCount1) {
                 weightedValue[index] = weightedValue[index - 1] + getWeightedValue(1);
                 index++;
                 countedNum++;
             }
             countedNum = 0;
-            while (index <= 4 && countedNum < statCount2) {
+            while (index <= 5 && countedNum < statCount2) {
                 weightedValue[index] = weightedValue[index - 1] + getWeightedValue(2);
                 index++;
                 countedNum++;
             }
             countedNum = 0;
-            while (index <= 4 && countedNum < statCount3) {
+            while (index <= 5 && countedNum < statCount3) {
                 weightedValue[index] = weightedValue[index - 1] + getWeightedValue(3);
                 index++;
                 countedNum++;
             }
             countedNum = 0;
-            while (index <= 4 && countedNum < statCount4) {
+            while (index <= 5 && countedNum < statCount4) {
                 weightedValue[index] = weightedValue[index - 1] + getWeightedValue(4);
                 index++;
                 countedNum++;
             }
-            while (index <= 4) {
+            countedNum = 0;
+            while (index <= 5 && countedNum < statCount5) {
+                weightedValue[index] = weightedValue[index - 1] + getWeightedValue(5);
+                index++;
+                countedNum++;
+            }
+            while (index <= 5) {
                 weightedValue[index] = weightedValue[index - 1];
                 index++;
             }
 
             charMax3StatValue.put(character.getCharacterId(), weightedValue[3]);
             charMax4StatValue.put(character.getCharacterId(), weightedValue[4]);
+            charMax5StatValue.put(character.getCharacterId(), weightedValue[5]);
             maxStatPriority.put(character.getCharacterId(), weightedValue[1]);
+            backupStatPriority.put(character.getCharacterId(), weightedValue[2] - weightedValue[1]);
         }
 
         for(RelicEntity relicEntity : relicList) {
@@ -449,6 +467,7 @@ public class RelicCheckServiceImpl implements RelicCheckService{
                     relicFit.setSubStatFitDesc("词条数量错误");
                 } else {
                     double weightedValue = 0.0;
+                    int totalStatNums = 0;
                     Map<Integer, Integer> statPriorityMap = charStatPriorityMap.get(characterId);
                     StringBuilder sb = new StringBuilder("");
                     for(StatEnhance statEnhance : statEnhanceList) {
@@ -462,15 +481,43 @@ public class RelicCheckServiceImpl implements RelicCheckService{
                                 append(getWeightedValue(priority)).append(",").append("强化次数:").
                                 append(statEnhance.getEnhanceTimes()).append(",").append("强满率")
                                 .append(statEnhance.getEnhanceRate()).append(" ");
+
+                        totalStatNums += statEnhance.enhanceTimes;
                     }
                     relicFit.setSubStatFitDesc(sb.toString().trim());
 
+                    int mainStatPriority = statPriorityMap.getOrDefault(relicEntity.getMainStatId(), 0);
+                    double mainStatWeightedValue = 0;
+                    if(mainStatPriority != 0) {
+                        mainStatWeightedValue += getWeightedValue(mainStatPriority);
+                    }
                     if(statEnhanceList.size() == 3) {
-                        relicFit.setSubStatFitness(formatPrecision(weightedValue / charMax3StatValue.get(characterId)));
-                    } else {
-                        double dreamWeightedValue = charMax4StatValue.get(characterId) + (relicEntity.getRelicLevel() / 3) *
-                                maxStatPriority.get(characterId);
+                        double dreamWeightedValue = charMax3StatValue.get(characterId);
+                        if(mainStatWeightedValue > (charMax4StatValue.get(characterId) - charMax3StatValue.get(characterId))) {
+                            dreamWeightedValue = charMax4StatValue.get(characterId) - mainStatWeightedValue;
+                        }
+
                         relicFit.setSubStatFitness(formatPrecision(weightedValue / dreamWeightedValue));
+                    } else {
+                        double dreamWeightedValue = 0;
+                        if(mainStatWeightedValue > (charMax5StatValue.get(characterId) - charMax4StatValue.get(characterId))) {
+                            dreamWeightedValue += charMax5StatValue.get(characterId) - mainStatWeightedValue;
+                            if(mainStatWeightedValue == maxStatPriority.get(characterId)) {
+                                dreamWeightedValue += (totalStatNums - 4) * backupStatPriority.get(characterId);
+                            } else {
+                                dreamWeightedValue += (totalStatNums - 4) * maxStatPriority.get(characterId);
+                            }
+                        } else {
+                            dreamWeightedValue = charMax4StatValue.get(characterId) + (totalStatNums - 4) *
+                                    maxStatPriority.get(characterId);
+                        }
+
+                        double subStatFitness = (weightedValue / dreamWeightedValue);
+                        if((totalStatNums - 4) >= (relicEntity.getRelicLevel() / 3)) {
+                            subStatFitness = subStatFitness * 1.125;
+                        }
+
+                        relicFit.setSubStatFitness(formatPrecision(subStatFitness));
                     }
                 }
                 relicFitList.add(relicFit);
@@ -485,6 +532,7 @@ public class RelicCheckServiceImpl implements RelicCheckService{
             case 2 -> 0.75;
             case 3 -> 0.5;
             case 4 -> 0.25;
+            case 5 -> 0.1;
             default -> 0;
         };
     }

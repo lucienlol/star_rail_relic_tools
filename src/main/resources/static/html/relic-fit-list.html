@@ -2,9 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>遗器适配筛选列表页</title>
+    <link rel="stylesheet" href="http://localhost:8088/css/style.css">
 </head>
 <body>
+<div id="navbar">
+    <ul class="side-nav">
+        <li><a href="http://localhost:8088">首页</a></li>
+        <li><a href="http://localhost:8088/character/new">新增角色</a></li>
+        <li><a href="http://localhost:8088/relic/new">新增遗器</a></li>
+        <li><a href="http://localhost:8088/character/list">角色列表</a></li>
+        <li><a href="http://localhost:8088/relic/list">遗器列表</a></li>
+        <li><a href="http://localhost:8088/relic-fit/home">遗器适配列表</a></li>
+    </ul>
+</div>
+<div id="main-page">
+    <h1>遗器适配筛选列表页</h1>
+    <label>遗器id(多个用,隔开)</label>
+    <input id = "relic-id" type="text" />
 
+    <div id="character-div">
+        <p>角色</p>
+        <div>
+            <label class="character">all<input type="checkbox" checked></label>
+        </div>
+    </div>
+
+    <div id="relic-level-div">
+        <p>遗器等级</p>
+        <div>
+            <label class="relic-level">all<input type="checkbox" checked></label>
+            <label class="relic-level">0<input type="checkbox"></label>
+            <label class="relic-level">1<input type="checkbox"></label>
+            <label class="relic-level">2<input type="checkbox"></label>
+            <label class="relic-level">3<input type="checkbox"></label>
+            <label class="relic-level">4<input type="checkbox"></label>
+            <label class="relic-level">5<input type="checkbox"></label>
+            <label class="relic-level">6<input type="checkbox"></label>
+            <label class="relic-level">7<input type="checkbox"></label>
+            <label class="relic-level">8<input type="checkbox"></label>
+            <label class="relic-level">9<input type="checkbox"></label>
+            <label class="relic-level">10<input type="checkbox"></label>
+            <label class="relic-level">11<input type="checkbox"></label>
+            <label class="relic-level">12<input type="checkbox"></label>
+            <label class="relic-level">13<input type="checkbox"></label>
+            <label class="relic-level">14<input type="checkbox"></label>
+            <label class="relic-level">15<input type="checkbox"></label>
+        </div>
+    </div>
+
+    <div id="relic-set">
+        <p class="desc">遗器套装</p>
+        <div class="relic">
+            <label class="relic">all<input type="checkbox" checked></label>
+        </div>
+    </div>
+
+    <div id="relic-type">
+        <p class="desc">遗器部位</p>
+        <div class="relic-type">
+            <label class="relic-type">all<input type="checkbox" checked></label>
+            <label class="relic-type">帽子<input type="checkbox"></label>
+            <label class="relic-type">手套<input type="checkbox"></label>
+            <label class="relic-type">衣服<input type="checkbox"></label>
+            <label class="relic-type">鞋子<input type="checkbox"></label>
+            <label class="relic-type">球<input type="checkbox"></label>
+            <label class="relic-type">绳<input type="checkbox"></label>
+        </div>
+    </div>
+
+    <div id="main-stat">
+        <p class="desc">遗器主词条</p>
+        <div class="stat">
+            <label class="stat">all<input type="checkbox" checked></label>
+        </div>
+    </div>
+
+    <div id="sub-stat">
+        <p class="desc">遗器副词条</p>
+        <div class="stat">
+        </div>
+    </div>
+
+    <div id="bottom-div">
+        <button id="submit">筛选</button>
+        <button id="reset">重置</button>
+    </div>
+
+    <div id="result-table"></div>
+
+</div>
+<script type="text/javascript" src="http://localhost:8088/js/relic-fit-list.js"></script>
 </body>
 </html>

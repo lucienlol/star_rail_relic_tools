@@ -190,7 +190,8 @@ public class ConvertServiceImpl implements ConvertService{
         RelicFitQuery query = new RelicFitQuery();
         List<String> characters = relicFitReq.getCharacters();
         if(!characters.contains("all")) {
-            query.setCharacterIdList(toIntList(characters));
+            query.setCharacterIdList(characters.stream().map(cacheService::getCharacterByName).
+                    map(StarRailCharacter::getCharacterId).collect(Collectors.toList()));
         }
         List<String> relics = relicFitReq.getRelics();
         if(!relics.contains("all")) {
@@ -202,15 +203,18 @@ public class ConvertServiceImpl implements ConvertService{
         }
         List<String> relicTypes = relicFitReq.getRelicTypes();
         if(!relicTypes.contains("all")) {
-            query.setRelicTypeList(relicTypes.stream().map(cacheService::getRelicTypeByName).map(RelicType::getRelicTypeId).collect(Collectors.toList()));
+            query.setRelicTypeList(relicTypes.stream().map(cacheService::getRelicTypeByName).
+                    map(RelicType::getRelicTypeId).collect(Collectors.toList()));
         }
         List<String> relicSets = relicFitReq.getRelicSets();
         if(!relicSets.contains("all")) {
-            query.setRelicSetIdList(relicSets.stream().map(cacheService::getRelicSetByName).map(RelicSet::getRelicSetId).collect(Collectors.toList()));
+            query.setRelicSetIdList(relicSets.stream().map(cacheService::getRelicSetByName).
+                    map(RelicSet::getRelicSetId).collect(Collectors.toList()));
         }
         List<String> mainStats = relicFitReq.getMainStats();
         if(!mainStats.contains("all")) {
-            query.setMainStatIdList(mainStats.stream().map(cacheService::getStatByName).map(Stat::getStatId).collect(Collectors.toList()));
+            query.setMainStatIdList(mainStats.stream().map(cacheService::getStatByName).
+                    map(Stat::getStatId).collect(Collectors.toList()));
         }
         return query;
     }
@@ -221,6 +225,7 @@ public class ConvertServiceImpl implements ConvertService{
         vo.setRelicFitId(relicFitDetail.getRelicFitId());
         vo.setRelicId(relicFitDetail.getRelicId());
         vo.setCharacterName(relicFitDetail.getCharacterName());
+        vo.setCharacterId(relicFitDetail.getCharacterId());
         vo.setRelicLevel(relicFitDetail.getRelicLevel());
         vo.setRelicType(cacheService.getRelicTypeById(relicFitDetail.getRelicTypeId()).getRelicTypeName());
         vo.setRelicSetName(cacheService.getRelicSetById(relicFitDetail.getRelicSetId()).getRelicSetName());
@@ -230,6 +235,20 @@ public class ConvertServiceImpl implements ConvertService{
         vo.setRelicSetFit(relicFitDetail.getRelicSetFit());
         vo.setSubStatFitness(relicFitDetail.getSubStatFitness());
         vo.setSubStatFitDesc(relicFitDetail.getSubStatFitDesc());
+        return vo;
+    }
+
+    @Override
+    public RelicFitDetailVO toVO(RelicFit relicFit) {
+        RelicFitDetailVO vo = new RelicFitDetailVO();
+        vo.setCharacterId(relicFit.getCharacterId());
+        vo.setCharacterName(cacheService.getCharacterById(relicFit.getCharacterId()).getCharacterName());
+        vo.setMainStatFit(relicFit.getIsMainStatFit());
+        vo.setRelicFitId(relicFit.getRelicFitId());
+        vo.setRelicSetFit(relicFit.getIsRelicSetFit());
+        vo.setRelicId(relicFit.getRelicId());
+        vo.setSubStatFitDesc(relicFit.getSubStatFitDesc());
+        vo.setSubStatFitness(relicFit.getSubStatFitness());
         return vo;
     }
 }

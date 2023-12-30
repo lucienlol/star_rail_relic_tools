@@ -43,4 +43,6 @@ public interface ConvertService {
 
     public RelicFitDetailVO toVO(RelicFitDetail relicFitDetail);
 
+    public RelicFitDetailVO toVO(RelicFit relicFit);
+
 }

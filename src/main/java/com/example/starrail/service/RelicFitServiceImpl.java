@@ -43,13 +43,13 @@ public class RelicFitServiceImpl implements RelicFitService {
     public Boolean deleteRelicFitByQuery(RelicFitQuery relicFitQuery) {
         RelicFitExample example = new RelicFitExample();
         RelicFitExample.Criteria criteria = example.createCriteria();
-        if(relicFitQuery.getRelicFitIdList() != null) {
+        if(relicFitQuery.getRelicFitIdList() != null && !relicFitQuery.getRelicFitIdList().isEmpty()) {
             criteria.andRelicFitIdIn(relicFitQuery.getRelicFitIdList());
         }
-        if(relicFitQuery.getCharacterIdList() != null) {
+        if(relicFitQuery.getCharacterIdList() != null && !relicFitQuery.getCharacterIdList().isEmpty()) {
             criteria.andCharacterIdIn(relicFitQuery.getCharacterIdList());
         }
-        if(relicFitQuery.getRelicIdList() != null) {
+        if(relicFitQuery.getRelicIdList() != null && !relicFitQuery.getRelicIdList().isEmpty()) {
             criteria.andRelicIdIn(relicFitQuery.getRelicIdList());
         }
         if(relicFitQuery.getRelicSetFit() != null) {

@@ -2,6 +2,7 @@ package com.example.starrail.service;
 
 import com.example.starrail.po.RelicSet;
 import com.example.starrail.po.RelicType;
+import com.example.starrail.po.StarRailCharacter;
 import com.example.starrail.po.Stat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,12 @@ public class CacheServiceImpl implements CacheService{
 
     HashMap<Integer, Stat> statIdMap = new HashMap<>();
 
+    Boolean charNeedUpdated = false;
+
+    HashMap<String, StarRailCharacter> charNameMap = new HashMap<>();
+
+    HashMap<Integer, StarRailCharacter> charIdMap = new HashMap<>();
+
     List<RelicSet> relicSetLists = new ArrayList<>();
 
     List<RelicSet> cavernRelicLists = new ArrayList<>();
@@ -38,6 +45,8 @@ public class CacheServiceImpl implements CacheService{
     List<Stat> ropeStatList = new ArrayList<>();
 
     List<RelicType> relicTypeList = new ArrayList<>();
+
+    List<StarRailCharacter> characterList = new ArrayList<>();
 
     HashMap<String, RelicType> relicTypeNameMap = new HashMap<>();
 
@@ -117,6 +126,29 @@ public class CacheServiceImpl implements CacheService{
         return relicTypeIdMap.get(relicTypeId);
     }
 
+    @Override
+    public StarRailCharacter getCharacterById(Integer characterId) {
+        if(charIdMap.isEmpty() || charNeedUpdated) {
+            refreshCharacter();
+            charNeedUpdated = false;
+        }
+        return charIdMap.get(characterId);
+    }
+
+    @Override
+    public StarRailCharacter getCharacterByName(String characterName) {
+        if(charNameMap.isEmpty() || charNeedUpdated) {
+            refreshCharacter();
+            charNeedUpdated = false;
+        }
+        return charNameMap.get(characterName);
+    }
+
+    @Override
+    public void charNeedUpdate() {
+        charNeedUpdated = true;
+    }
+
 
     private void refreshRelicSet() {
         System.out.println("begin relic refresh");
@@ -154,5 +186,15 @@ public class CacheServiceImpl implements CacheService{
             relicTypeNameMap.put(relicType.getRelicTypeName(), relicType);
         }
 
+    }
+
+    private void refreshCharacter() {
+        System.out.println("begin character refresh");
+        characterList = characterService.getAllShow();
+
+        for(StarRailCharacter character : characterList) {
+            charIdMap.put(character.getCharacterId(), character);
+            charNameMap.put(character.getCharacterName(), character);
+        }
     }
 }

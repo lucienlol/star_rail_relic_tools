@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const subStat2List = [];
     const subStat3List = [];
     const subStat4List = [];
+    const subStat5List = [];
 
     if(characterBuild != null && characterBuild.hasOwnProperty('characterName')) {
         const submitButton = document.getElementById("submit-character-build");
@@ -87,6 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 subStat3List.push(subStat.statName);
             } else if(subStat.priority === 4) {
                 subStat4List.push(subStat.statName);
+            } else if(subStat.priority === 5) {
+                subStat5List.push(subStat.statName);
             }
         }
     }
@@ -268,6 +271,20 @@ document.addEventListener("DOMContentLoaded", () => {
             labelElem.appendChild(inputElem);
             subStat4Div.appendChild(labelElem.cloneNode(true));
         }
+
+        const subStat5Div = document.getElementById("5-level-stat").children[1];
+        for(statData of rawData) {
+            const labelElem = document.createElement("label");
+            labelElem.textContent = statData.statName;
+            labelElem.className = "stat";
+            const inputElem = document.createElement("input");
+            inputElem.type = "checkbox";
+            if(subStat5List.includes(statData.statName)) {
+                inputElem.checked = true;
+            }
+            labelElem.appendChild(inputElem);
+            subStat5Div.appendChild(labelElem.cloneNode(true));
+        }
     }
 
     fetch("http://localhost:8088/relic-set/all")
@@ -445,6 +462,16 @@ function genBuildData() {
             const subStat = {}
             subStat.statName = statElem.textContent;
             subStat.priority = 4;
+            subStats.push(subStat);
+        }
+    }
+
+    const sub5StatList = document.getElementById("5-level-stat").children[1].children;
+    for (statElem of sub5StatList) {
+        if (statElem.children[0].checked === true) {
+            const subStat = {}
+            subStat.statName = statElem.textContent;
+            subStat.priority = 5;
             subStats.push(subStat);
         }
     }

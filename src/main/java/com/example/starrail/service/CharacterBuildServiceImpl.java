@@ -46,6 +46,7 @@ public class CharacterBuildServiceImpl implements CharacterBuildService{
         character.setCharacterName(characterBuild.getCharacterName());
         character.setIsHide(false);
         characterService.addCharacter(character);
+        cacheService.charNeedUpdate();
         Integer characterId = character.getCharacterId();
 
         CharOptions charOptions = new CharOptions();
@@ -85,6 +86,7 @@ public class CharacterBuildServiceImpl implements CharacterBuildService{
         character.setCharacterName(characterBuild.getCharacterName());
         character.setIsHide(false);
         characterService.updateCharacter(character);
+        cacheService.charNeedUpdate();
 
         CharOptions charOptions = new CharOptions();
         charOptions.setCharacterId(characterId);

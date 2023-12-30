@@ -4,7 +4,6 @@ import java.util.List;
 
 public class RelicFitReq {
 
-
     List<String> characters;
 
     List<String> relics;
@@ -16,6 +15,8 @@ public class RelicFitReq {
     List<String> relicSets;
 
     List<String> mainStats;
+
+    List<String> subStats;
 
     public List<String> getCharacters() {
         return characters;
@@ -62,6 +63,14 @@ public class RelicFitReq {
 
     public void setRelicTypes(List<String> relicTypes) {
         this.relicTypes = relicTypes;
+    }
+
+    public List<String> getSubStats() {
+        return subStats;
+    }
+
+    public void setSubStats(List<String> subStats) {
+        this.subStats = subStats;
     }
 
 }

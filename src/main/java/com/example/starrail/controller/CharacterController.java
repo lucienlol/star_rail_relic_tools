@@ -39,11 +39,13 @@ public class CharacterController {
     @PostMapping("/add")
     public void addCharacter(@RequestBody StarRailCharacter character) {
         characterService.addCharacter(character);
+        cacheService.charNeedUpdate();
     }
 
     @PostMapping("/update")
     public void updateCharacter(@RequestBody StarRailCharacter character) {
         characterService.addCharacter(character);
+        cacheService.charNeedUpdate();
     }
 
     @GetMapping("/list")

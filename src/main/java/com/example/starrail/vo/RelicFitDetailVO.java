@@ -1,10 +1,12 @@
 package com.example.starrail.vo;
 
-public class RelicFitDetailVO {
+public class RelicFitDetailVO implements Comparable<RelicFitDetailVO> {
 
     Integer relicFitId;
 
     Integer relicId;
+
+    Integer characterId;
 
     String characterName;
 
@@ -32,6 +34,14 @@ public class RelicFitDetailVO {
 
     public void setSubStatValues(String subStatValues) {
         this.subStatValues = subStatValues;
+    }
+
+    public Integer getCharacterId() {
+        return characterId;
+    }
+
+    public void setCharacterId(Integer characterId) {
+        this.characterId = characterId;
     }
 
     public Integer getRelicFitId() {
@@ -122,4 +132,21 @@ public class RelicFitDetailVO {
         this.relicType = relicType;
     }
 
+    public int compareTo(RelicFitDetailVO o) {
+        int flagValue = (this.isMainStatFit?1:0) + (this.isRelicSetFit?1:0);
+        Integer objectFlagValue = (o.isMainStatFit?1:0) + (o.isRelicSetFit?1:0);
+        if(flagValue != objectFlagValue) {
+            return objectFlagValue.compareTo(flagValue);
+        }
+
+        return o.subStatFitness.compareTo(this.subStatFitness);
+    }
+
+    public boolean highFit() {
+        if((this.isMainStatFit && this.isRelicSetFit) && this.subStatFitness >= 0.4) {
+            return true;
+        } else if((this.isMainStatFit || this.isRelicSetFit) && this.subStatFitness >= 0.5) {
+            return true;
+        } else return (!this.isMainStatFit && !this.isRelicSetFit) && this.subStatFitness >= 0.6;
+    }
 }
